@@ -6,19 +6,23 @@ using DG.Tweening;
 public class BallBehaviour : MonoBehaviour
 {
 
+
     //private float horizontalInput;
     private Material ballMaterial;
     private float moveDistance = 0;
    
-    public float bounceDistance = 0;
-    public float bounceDuration = 0;
-    public float forwardMoveDuration = 0;
+    [SerializeField] private float bounceDistance = 0;
+    [SerializeField] private float bounceDuration = 0;
+    [SerializeField] private float forwardMoveDuration = 0;
+    [SerializeField] private Vector3[] waypoints;
+    [SerializeField] private Vector3 scale = new Vector3(0.5f,0.5f);
 
     // Start is called before the first frame update
     void Start()
     {
         ballMaterial = GetComponent<SpriteRenderer>().material;
         BallBounce();
+        //BallBounceAlternate();
     }
 
     // Update is called once per frame
@@ -51,8 +55,12 @@ public class BallBehaviour : MonoBehaviour
 
     private void BallBounceAlternate()
     {
-        transform.DOMoveY(bounceDistance, bounceDuration).OnComplete(ChangeColorAtHighestPoint);
-
+        Sequence circleSequence = DOTween.Sequence();
+        circleSequence.Append(transform.DOPath(waypoints, bounceDuration, PathType.Linear, PathMode.Full3D).SetEase(Ease.InOutSine));
+        circleSequence.Join(transform.DOScale(scale, bounceDuration).SetEase(Ease.InOutFlash));
+        circleSequence.SetLoops(-1, LoopType.Yoyo);
+            
+        
     }
 
 
@@ -65,7 +73,7 @@ public class BallBehaviour : MonoBehaviour
 
         var sequence = DOTween.Sequence()
             .Append(transform.DOMoveY(bounceDistance, bounceDuration).SetEase(Ease.InOutSine))
-            .Join(transform.DOScale(new Vector3(0.5f, 0.5f), bounceDuration).SetEase(Ease.InOutSine))
+            .Join(transform.DOScale(scale, bounceDuration).SetEase(Ease.InOutSine))
             .Join(ballMaterial.DOBlendableColor(Color.red, bounceDuration).SetEase(Ease.InOutFlash));
 
         sequence.SetLoops(-1, LoopType.Yoyo);

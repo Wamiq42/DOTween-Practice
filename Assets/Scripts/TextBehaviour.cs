@@ -7,7 +7,9 @@ using DG.Tweening;
 public class TextBehaviour : MonoBehaviour
 {
     [SerializeField] private Text sampleText;
-    [SerializeField] private Vector2[] waypoints;
+    [SerializeField] private Vector3[] waypoints;
+    [SerializeField] private float duration;
+    [SerializeField] private float rotationAngle;
     [SerializeField] private RectTransform textRectTransform;
     
     // Start is called before the first frame update
@@ -15,13 +17,10 @@ public class TextBehaviour : MonoBehaviour
     {
         Sequence mySequence = DOTween.Sequence();
         mySequence.Append(textRectTransform.DOLocalMove(waypoints[0], 2.0f))
-                  .Join(sampleText.DOText("Wamiq Uddin", 2.0f, true, ScrambleMode.All));
+                  .Join(sampleText.DOText("Wamiq Uddin", duration, true, ScrambleMode.All))
+                  .Join(sampleText.DOBlendableColor(Color.green , 2))
+                  .Join(textRectTransform.DOLocalRotate(Vector3.forward * rotationAngle, duration));
         
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
 }
